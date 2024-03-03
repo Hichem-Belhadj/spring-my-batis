@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hbtheme.springmybatis.mappers.StudentMapper">
+    <resultMap id="StudentResultMap" type="Student">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="first_name" property="firstName" jdbcType="VARCHAR"/>
+        <result column="last_name" property="lastName" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ${alias}.id,
+        ${alias}.first_name,
+        ${alias}.last_name,
+        ${alias}.email
+    </sql>
+
+    <select id="findAllStudents" resultMap="StudentResultMap">
+        SELECT
+        <include refid="Base_Column_List">
+            <property name="alias" value="s" />
+        </include>
+        FROM student s
+    </select>
+
+    <select id="findStudentById" parameterType="Integer" statementType="PREPARED" resultMap="StudentResultMap">
+        SELECT
+        <include refid="Base_Column_List">
+            <property name="alias" value="s" />
+        </include>
+        FROM student s
+        WHERE s.id = #{id}
+    </select>
+
+
+    <insert id="insertStudent" parameterType="Student" flushCache="true" statementType="PREPARED"
+            keyProperty="id" keyColumn="id" useGeneratedKeys="false" timeout="20">
+        INSERT INTO student (first_name, last_name, email) VALUES(#{firstName}, #{lastName},#{email})
+    </insert>
+
+    <update id="updateStudent" parameterType="Student" flushCache="true" statementType="PREPARED" timeout="20">
+        UPDATE
+        student SET
+            first_name = #{student.firstName},
+            last_name = #{student.lastName},
+            email = #{student.email}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteStudent" parameterType="Student" flushCache="true" statementType="PREPARED" timeout="20">
+        DELETE FROM student
+        WHERE id = #{id}
+    </delete>
+</mapper>
